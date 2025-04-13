@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marjie</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --yt-red: #ff0000;
+            --yt-dark: #212121;
+            --yt-light-dark: #383838;
+            --yt-light-gray: #f9f9f9;
+            --yt-gray: #aaaaaa;
+            --yt-white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--yt-light-gray);
+            color: #030303;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: 56px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--yt-white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-toggle {
+            padding: 8px;
+            margin-right: 16px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        
+        .menu-toggle:hover {
+            background-color: #f2f2f2;
+        }
+        
+        .logo {
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .header-center {
+            display: flex;
+            align-items: center;
+            flex: 0 1 640px;
+        }
+        
+        .search-bar {
+            display: flex;
+            flex: 1;
+            height: 40px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0 16px;
+            border: 1px solid #d3d3d3;
+            border-right: none;
+            border-radius: 20px 0 0 20px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-button {
+            width: 64px;
+            background-color: #f8f8f8;
+            border: 1px solid #d3d3d3;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-icon {
+            padding: 8px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        
+        .header-icon:hover {
+            background-color: #f2f2f2;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 240px;
+            background-color: var(--yt-white);
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            padding: 12px 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 900;
+        }
+        
+        .sidebar-section {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            height: 40px;
+            cursor: pointer;
+        }
+        
+        .sidebar-item:hover {
+            background-color: #f2f2f2;
+        }
+        
+        .sidebar-item.active {
+            background-color: #e5e5e5;
+        }
+        
+        .sidebar-item i {
+            margin-right: 24px;
+            font-size: 20px;
+        }
+        
+        .sidebar-item span {
+            font-size: 14px;
+        }
+        
+        .sidebar-collapsed {
+            transform: translateX(-240px);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            margin-top: 56px;
+            margin-left: 240px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .main-content-expanded {
+            margin-left: 0;
+        }
+        
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            padding: 12px 0;
+            margin-bottom: 16px;
+            gap: 8px;
+        }
+        
+        .category-chip {
+            background-color: #f2f2f2;
+            border-radius: 16px;
+            padding: 8px 12px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        
+        .category-chip:hover {
+            background-color: #e5e5e5;
+        }
+        
+        .category-chip.active {
+            background-color: #030303;
+            color: white;
+        }
+        
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        .video-card {
+            cursor: pointer;
+        }
+        
+        .thumbnail-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            border-radius: 8px;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+        
+        .duration {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 3px 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .video-details {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .channel-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #aaa;
+        }
+        
+        .video-info {
+            flex: 1;
+        }
+        
+        .video-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .video-channel, .video-stats {
+            font-size: 14px;
+            color: #606060;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-240px);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header-center {
+                display: none;
+            }
+            
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo">
+                <i class="far fa-registered" style="color: var(--yt-red); font-size: 24px;"></i>
+                <span style="font-weight: bold; margin-left: 4px;">Marjie</span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search">
+                <button class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="header-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-th"></i>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle" style="font-size: 24px;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-compass"></i>
+                <span>Explore</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-bookmark"></i>
+                <span>Subscriptions</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-item">
+                <i class="fas fa-play-circle"></i>
+                <span>Library</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-clock"></i>
+                <span>Watch later</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-thumbs-up"></i>
+                <span>Liked videos</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <h3 style="padding: 8px 24px; font-size: 16px; color: #606060;">SUBSCRIPTIONS</h3>
+            <div class="sidebar-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Channel 1</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Channel 2</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Channel 3</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="categories">
+            <div class="category-chip active">All</div>
+            <div class="category-chip">Music</div>
+            <div class="category-chip">Gaming</div>
+            <div class="category-chip">Live</div>
+            <div class="category-chip">Programming</div>
+            <div class="category-chip">Comedy</div>
+            <div class="category-chip">Podcasts</div>
+            <div class="category-chip">Cooking</div>
+            <div class="category-chip">Recently uploaded</div>
+            <div class="category-chip">Watched</div>
+            <div class="category-chip">New to you</div>
+        </div>
+        
+        <div class="videos-grid">
+            <!-- Video Card 1 -->
+            <div class="video-card">
+             
+<div style="position:relative;padding-top:56.25%;"><iframe src="https://iframe.mediadelivery.net/embed/407863/a8fe56c3-e410-4a23-b2fc-5fbadb24c1dd?autoplay=true&loop=false&muted=false&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen="true"></iframe></div>
+                <div class="video-details">
+                    <div class="channel-icon"></div>
+                    <div class="video-info">
+                        <h3 class="video-title">Never Gonna Give You Up - Official Music Video</h3>
+                        <p class="video-channel">Rick Astley</p>
+                        <p class="video-stats">1.2B views • 5 years ago</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Card 2 -->
+            <div class="video-card">
+                <div style="position:relative;padding-top:56.25%;"><iframe src="https://iframe.mediadelivery.net/embed/407863/8e8d7f10-5740-47a7-be01-173d85fc27d8?autoplay=true&loop=false&muted=false&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen="true"></iframe></div>
+                <div class="video-details">
+                    <div class="channel-icon"></div>
+                    <div class="video-info">
+                        <h3 class="video-title">Keyboard Cat - The Original</h3>
+                        <p class="video-channel">Keyboard Cat</p>
+                        <p class="video-stats">50M views • 10 years ago</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Card 3 -->
+            <div class="video-card">
+                <div class="thumbnail-container">
+                    <img src="https://gateway.ipfs.io/ipfs/QmNgoacgbARoSn9vhAPYdDMzSnsow7dFCfHzeZKftJ1hRD" class="thumbnail" alt="Video thumbnail">
+                    <span class="duration">4:13</span>
+                </div>
+                <div class="video-details">
+                    <div class="channel-icon"></div>
+                    <div class="video-info">
+                        <h3 class="video-title">PSY - GANGNAM STYLE(강남스타일)</h3>
+                        <p class="video-channel">officialpsy</p>
+                        <p class="video-stats">4.5B views • 8 years ago</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Card 4 -->
+            <div class="video-card">
+                <div class="thumbnail-container">
+                    <img src="https://gateway.ipfs.io/ipfs/QmNgoacgbARoSn9vhAPYdDMzSnsow7dFCfHzeZKftJ1hRD" class="thumbnail" alt="Video thumbnail">
+                    <span class="duration">3:47</span>
+                </div>
+                <div class="video-details">
+                    <div class="channel-icon"></div>
+                    <div class="video-info">
+                        <h3 class="video-title">Wiz Khalifa - See You Again ft. Charlie Puth</h3>
+                        <p class="video-channel">Wiz Khalifa</p>
+                        <p class="video-stats">6.2B views • 6 years ago</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Card 5 -->
+            <div class="video-card">
+                <div class="thumbnail-container">
+                    <img src="https://gateway.ipfs.io/ipfs/QmNgoacgbARoSn9vhAPYdDMzSnsow7dFCfHzeZKftJ1hRD" class="thumbnail" alt="Video thumbnail">
+                    <span class="duration">4:16</span>
+                </div>
+                <div class="video-details">
+                    <div class="channel-icon"></div>
+                    <div class="video-info">
+                        <h3 class="video-title">Luis Fonsi - Despacito ft. Daddy Yankee</h3>
+                        <p class="video-channel">Luis Fonsi</p>
+                        <p class="video-stats">7.8B views • 4 years ago</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Card 6 -->
+            <div class="video-card">
+                <div class="thumbnail-container">
+                    <img src="https://gateway.ipfs.io/ipfs/QmNgoacgbARoSn9vhAPYdDMzSnsow7dFCfHzeZKftJ1hRD" class="thumbnail" alt="Video thumbnail">
+                    <span class="duration">3:22</span>
+                </div>
+                <div class="video-details">
+                    <div class="channel-icon"></div>
+                    <div class="video-info">
+                        <h3 class="video-title">Ed Sheeran - Shape of You</h3>
+                        <p class="video-channel">Ed Sheeran</p>
+                        <p class="video-stats">5.9B views • 5 years ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-collapsed');
+            mainContent.classList.toggle('main-content-expanded');
+        });
+
+        // Category chips functionality
+        const categoryChips = document.querySelectorAll('.category-chip');
+        categoryChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                categoryChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
+
+        // Sidebar items functionality
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // On mobile, close sidebar after selecting an item
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('sidebar-collapsed');
+                    mainContent.classList.add('main-content-expanded');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
